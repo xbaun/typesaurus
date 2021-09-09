@@ -1,4 +1,4 @@
-import assert from 'assert'
+import * as assert from 'assert'
 import nanoid from 'nanoid'
 import get from '../get'
 import upset from '.'
@@ -86,11 +86,11 @@ describe('merge', () => {
     const post = await get(posts, postId)
     const returnedDate = post.data.date
     assert(returnedDate instanceof Date)
-    assert(returnedDate.getTime() < now && returnedDate.getTime() > now - 10000)
+    assert(returnedDate.getTime() < now + 10000 && returnedDate.getTime() > now - 10000)
     const postFromDB = await get(posts, post.ref.id)
     const dateFromDB = postFromDB.data.date
     assert(dateFromDB instanceof Date)
-    assert(dateFromDB.getTime() < now && dateFromDB.getTime() > now - 10000)
+    assert(dateFromDB.getTime() < now + 10000 && dateFromDB.getTime() > now - 10000)
   })
 
   it('allows incrementing values', async () => {

@@ -3,10 +3,11 @@
  */
 
 import { getAll } from '../utils'
+import type firebase from 'firebase/compat';
 
 export default async function adaptor() {
-  const { default: firebase } = await import('firebase/app')
-  await import('firebase/firestore')
+  const { default: firebase } = await import('firebase/compat/app')
+  await import('firebase/compat/firestore')
 
   const firestore = firebase.firestore()
   // At the moment, the browser's Firestore adaptor doesn't support getAll.

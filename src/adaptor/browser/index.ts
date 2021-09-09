@@ -2,8 +2,8 @@
  * Browser Firestore adaptor.
  */
 
-import * as firebase from 'firebase/app'
-import 'firebase/firestore'
+import firebase from 'firebase/compat/app'
+import 'firebase/compat/firestore'
 import { getAll } from '../utils'
 
 export default async function adaptor() {

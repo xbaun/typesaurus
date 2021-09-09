@@ -1,5 +1,5 @@
 import { group } from '.'
-import assert from 'assert'
+import * as assert from 'assert'
 import { subcollection } from '../subcollection'
 import { Ref } from '../ref'
 import { collection } from '../collection'

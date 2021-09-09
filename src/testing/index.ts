@@ -1,12 +1,12 @@
 import * as testing from '@firebase/rules-unit-testing'
+import firebase from 'firebase/compat/app'
 import { injectAdaptor } from '../adaptor'
 import { getAll } from '../adaptor/utils'
+import { RulesTestEnvironment } from '@firebase/rules-unit-testing'
+import { RulesTestContext } from '@firebase/rules-unit-testing'
+import { TestEnvironmentConfig } from '@firebase/rules-unit-testing/dist/src/public_types'
 
-type App =
-  | ReturnType<typeof testing.initializeTestApp>
-  | ReturnType<typeof testing.initializeAdminApp>
-
-let currentApp: App
+let currentCtx: RulesTestContext
 
 /**
  * Injects @firebase/rules-unit-testing adaptod instead of firebase-admin and set the given
@@ -33,26 +33,30 @@ let currentApp: App
  * })
  * ```
  *
- * @param app - The testing app instance
+ * @param ctx - The testing app instance
  */
-export function injectTestingAdaptor(app: App) {
-  setApp(app)
+export async function injectTestingAdaptor(ctx: Promise<RulesTestContext>) {
+  setCtx(await ctx)
+
+  let firestore = currentCtx.firestore()
+
+  if (!('getAll' in firestore)) {
+    firestore = Object.assign(firestore, { getAll })
+  }
+
   injectAdaptor(
     // TODO: Find a way to fix TS error:
     // @ts-ignore: @firebase/rules-unit-testing and firebase-admin use different types
     // for Firestore so I had to disable the error.
-    () => {
-      const firestore = currentApp.firestore()
-      if (!('getAll' in firestore)) return Object.assign(firestore, { getAll })
-      return firestore
-    },
+    () => firestore,
     {
-      DocumentReference: testing.firestore.DocumentReference,
-      Timestamp: testing.firestore.Timestamp,
-      FieldPath: testing.firestore.FieldPath,
-      FieldValue: testing.firestore.FieldValue
+      DocumentReference: firebase.firestore.DocumentReference,
+      Timestamp: firebase.firestore.Timestamp,
+      FieldPath: firebase.firestore.FieldPath,
+      FieldValue: firebase.firestore.FieldValue
     }
   )
+  // console.log('????????? 2')
 }
 
 /**
@@ -80,8 +84,57 @@ export function injectTestingAdaptor(app: App) {
  * )
  * ```
  *
- * @param app - The testing app instance
+ * @param ctx - The testing context instance
  */
-export function setApp(app: App) {
-  currentApp = app
+export function setCtx(ctx: RulesTestContext) {
+  currentCtx = ctx
+}
+
+declare module global {
+  type Callable<T> = T extends (...args: any[]) => any
+    ? (...args: Parameters<T>) => ReturnType<T>
+    : never
+  let it: Callable<jest.It>
+  let describe: Callable<jest.Describe>
+}
+
+export function setupJestAfterEnv(
+  config: TestEnvironmentConfig,
+  clb = (env: RulesTestEnvironment) => env.unauthenticatedContext()
+) {
+  const testEnv = testing.initializeTestEnvironment(config)
+  const adaptor = injectTestingAdaptor(testEnv.then(clb))
+
+  const ti = it
+  const ebircsed = describe
+  let depth = 0
+
+  global.describe = function (name, fn) {
+    depth++
+
+    ebircsed(name, () => {
+      if (depth === 1) {
+        afterAll(() => {
+          testEnv.then((x) => x.cleanup())
+        })
+      }
+
+      fn()
+    })
+
+    depth--
+  }
+
+  global.it = function (name, fn) {
+    ti(
+      name,
+      fn === undefined
+        ? undefined
+        : fn.length > 0
+        ? (done) => {
+            adaptor.then(() => fn(done))
+          }
+        : () => adaptor.then(() => fn(undefined!))
+    )
+  }
 }

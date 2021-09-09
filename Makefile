@@ -4,7 +4,7 @@
 BIN = $(shell yarn bin)
 
 test:
-	${BIN}/firebase emulators:exec --only firestore "${BIN}/jest --env node"
+	${BIN}/firebase emulators:exec --only firestore "${BIN}/jest"
 .PHONY: test
 
 test-watch:

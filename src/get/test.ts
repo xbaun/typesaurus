@@ -1,4 +1,4 @@
-import assert from 'assert'
+import * as assert from 'assert'
 import get from '.'
 import { collection } from '../collection'
 import { Ref, ref } from '../ref'

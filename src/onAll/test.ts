@@ -1,5 +1,5 @@
 import onAll from '.'
-import assert from 'assert'
+import * as assert from 'assert'
 import set from '../set'
 import { collection } from '../collection'
 import { Ref, ref } from '../ref'

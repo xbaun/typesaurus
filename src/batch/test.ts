@@ -1,4 +1,4 @@
-import assert from 'assert'
+import * as assert from 'assert'
 import { batch } from '.'
 import { collection } from '../collection'
 import { ref } from '../ref'
@@ -47,17 +47,17 @@ describe('batch', () => {
     ])
     assert.deepEqual(sasha, {
       __type__: 'doc',
-      ref: { __type__: 'ref', collection: users, id: `${id}-sasha` },
+      ref: { __type__: 'ref', collection: users, id: `${id}-sasha` }, meta: undefined,
       data: { name: 'Sasha' }
     })
     assert.deepEqual(tati, {
       __type__: 'doc',
-      ref: { __type__: 'ref', collection: users, id: `${id}-tati` },
+      ref: { __type__: 'ref', collection: users, id: `${id}-tati` }, meta: undefined,
       data: { name: 'Tati' }
     })
     assert.deepEqual(ed, {
       __type__: 'doc',
-      ref: { __type__: 'ref', collection: users, id: `${id}-ed` },
+      ref: { __type__: 'ref', collection: users, id: `${id}-ed` }, meta: undefined,
       data: { name: 'Ed' }
     })
   })

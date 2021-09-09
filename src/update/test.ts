@@ -1,4 +1,4 @@
-import assert from 'assert'
+import * as assert from 'assert'
 import nanoid from 'nanoid'
 import update from '.'
 import add from '../add'
@@ -165,7 +165,7 @@ describe('update', () => {
     const dateFromDB = userFromDB.data.birthday
     const now = Date.now()
     assert(dateFromDB instanceof Date)
-    assert(dateFromDB.getTime() < now && dateFromDB.getTime() > now - 10000)
+    assert(dateFromDB.getTime() < now + 10000 && dateFromDB.getTime() > now - 10000)
   })
 
   describe('updating arrays', () => {

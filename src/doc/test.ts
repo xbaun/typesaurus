@@ -1,4 +1,4 @@
-import assert from 'assert'
+import * as assert from 'assert'
 import nanoid from 'nanoid'
 import { doc } from '.'
 import { collection } from '../collection'
@@ -13,7 +13,8 @@ describe('Doc', () => {
       assert.deepEqual(doc(userRef, { name: 'Sasha' }), {
         __type__: 'doc',
         ref: userRef,
-        data: { name: 'Sasha' }
+        data: { name: 'Sasha' },
+        meta: undefined
       })
     })
   })

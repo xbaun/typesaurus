@@ -1,4 +1,4 @@
-import assert from 'assert'
+import * as assert from 'assert'
 import onGet from '.'
 import get from '../get'
 import { collection } from '../collection'
